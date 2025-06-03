@@ -10,6 +10,62 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
+
+model Funcionario {
+  id           Int      @id @default(autoincrement())
+  nome         String
+  senha        String
+  cargo        String
+  ativo        Boolean  @default(true)
+  pedidos      Pedido[]
+}
+
+model Categoria {
+  id          Int       @id @default(autoincrement())
+  nome        String
+  descricao   String?
+  produtos    Produto[]
+}
+
+model Produto {
+  id             Int       @id @default(autoincrement())
+  nome           String
+  descricao      String?
+  preco          Float
+  estoque        Int
+  id_categoria   Int
+  quantidade     Float
+  unidade_medida String
+  imagem_url     String?
+  ativo          Boolean   @default(true)
+
+  categoria      Categoria @relation(fields: [id_categoria], references: [id])
+  itensPedido    ItemPedido[]
+}
+
+model Pedido {
+  id              Int          @id @default(autoincrement())
+  id_funcionario  Int
+  data_pedido     DateTime
+  cpf_comprador   String?
+  total           Float
+  forma_pagamento String
+
+  funcionario     Funcionario  @relation(fields: [id_funcionario], references: [id])
+  itensPedido     ItemPedido[]
+}
+
+model ItemPedido {
+  id           Int      @id @default(autoincrement())
+  id_pedido    Int
+  id_produto   Int
+  quantidade   Int
+  preco_unitario Float
+
+  pedido       Pedido   @relation(fields: [id_pedido], references: [id])
+  produto      Produto  @relation(fields: [id_produto], references: [id])
+}
+
