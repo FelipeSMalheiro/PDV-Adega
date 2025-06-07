@@ -7,3 +7,12 @@ npm install sqlite3
 npx prisma generate
 
 npm run start:dev - para iniciar o backend
+
+npm install class-validator class-transformer
+
+
+npm install bcrypt
+npm install --save-dev @types/bcrypt
+
+
+

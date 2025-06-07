@@ -16,7 +16,7 @@ datasource db {
 model Funcionario {
   id           Int      @id @default(autoincrement())
   nome         String
-  cpf          String
+  cpf          String   @unique
   senha        String
   cargo        String
   ativo        Boolean  @default(true)
