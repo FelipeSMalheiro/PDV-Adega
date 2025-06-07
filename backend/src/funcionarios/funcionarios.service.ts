@@ -27,12 +27,18 @@ export class FuncionariosService {
   }
 
   async create(data: Omit<Funcionario, 'id'>): Promise<Funcionario> {
-    try {
-      return await this.prisma.funcionario.create({ data });
-    } catch (error) {
-      throw new InternalServerErrorException('Erro ao criar funcionário.');
+  try {
+    return await this.prisma.funcionario.create({ data });
+  } catch (error) {
+    console.error('Erro ao criar funcionário:', error); // Exibe o erro no console
+    if (error.code === 'P2002') {
+      // Se o erro for relacionado a um campo único (como e-mail já existente)
+      throw new Error('Já existe um funcionário com esse e-mail ou CPF.');
     }
+    throw new InternalServerErrorException('Erro ao criar funcionário. Detalhes: ' + error.message);
   }
+}
+
 
   async update(id: number, data: Partial<Funcionario>): Promise<Funcionario> {
     try {

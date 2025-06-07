@@ -44,16 +44,20 @@ export class FuncionariosController {
   }
 
   @Post()
-  async create(@Body() funcionarioData: Omit<Funcionario, 'id'>): Promise<Funcionario> {
-    try {
-      return await this.funcionariosService.create(funcionarioData);
-    } catch (error) {
-      throw new HttpException(
-        'Erro ao criar funcionário',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+async create(@Body() funcionarioData: Omit<Funcionario, 'id'>): Promise<Funcionario> {
+  try {
+    return await this.funcionariosService.create(funcionarioData);
+  } catch (error) {
+    if (error.message.includes('Já existe um funcionário com esse e-mail ou CPF')) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST); // 400 para erro de duplicidade
     }
+    throw new HttpException(
+      'Erro ao criar funcionário. Por favor, tente novamente.',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
+}
+
 
   @Put(':id')
   async update(

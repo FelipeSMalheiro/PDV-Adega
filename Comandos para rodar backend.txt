@@ -1,0 +1,9 @@
+cd backend - para selecionar a pasta
+
+npm install @prisma/client
+npm install -D prisma
+npm install sqlite3
+
+npx prisma generate
+
+npm run start:dev - para iniciar o backend
