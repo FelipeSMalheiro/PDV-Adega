@@ -40,15 +40,23 @@ async create(data: CreateProdutoDto): Promise<Produto> {
   }
 }  
 
-  async update(id: number, data: UpdateProdutoDto): Promise<Produto> {
-    try {
-      await this.findOne(id);
-      return await this.prisma.produto.update({ where: { id }, data });
-    } catch (error) {
-      console.error('Erro ao atualizar produto:', error);
-      throw new InternalServerErrorException('Erro ao atualizar produto');
-    }
+async update(id: number, data: UpdateProdutoDto): Promise<Produto> {
+  try {
+    await this.findOne(id);
+
+    const { id: _, categoria: __, ...dadosLimpos } = data as any;
+
+    return await this.prisma.produto.update({
+      where: { id },
+      data: dadosLimpos,
+    });
+  } catch (error) {
+    console.error('Erro ao atualizar produto:', error);
+    throw new InternalServerErrorException('Erro ao atualizar produto');
   }
+}
+
+
 
   async remove(id: number): Promise<Produto> {
     try {
