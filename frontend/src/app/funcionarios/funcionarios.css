@@ -1,0 +1,98 @@
+@import '../painel/painel.css';
+
+/* Wrapper do conteúdo, com margens fixas */
+.painel-conteudo-wrapper {
+  padding: 40px;
+  height: calc(100vh - 100px); /* altura total menos o cabeçalho */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Seção da tabela ocupa o espaço principal */
+.secao-funcionarios {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Tabela de funcionários */
+.tabela-funcionarios {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: auto;
+}
+
+/* Tabela ajustada */
+.tabela-funcionarios table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-funcionarios th,
+.tabela-funcionarios td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.tabela-funcionarios th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.tabela-funcionarios tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+/* Ações */
+.btn-acao {
+  padding: 6px 12px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  color: white;
+}
+
+.btn-editar {
+  background-color: #2563eb;
+}
+
+.btn-editar:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-excluir {
+  background-color: #dc2626;
+}
+
+.btn-excluir:hover {
+  background-color: #b91c1c;
+}
+
+/* Botão final */
+.botao-novo-usuario {
+  align-self: center;
+  margin-top: 30px;
+  padding: 16px 32px;
+  background-color: #ae7629;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botao-novo-usuario:hover {
+  background-color: #965f1f;
+}
