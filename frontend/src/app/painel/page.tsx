@@ -1,28 +1,37 @@
 'use client'
 
+'use client'
+
 import Image from 'next/image'
 import './painel.css'
 import { useEffect, useState } from 'react'
 
 type Produto = {
+  id: number
   nome: string
-  quantidade: number
+  estoque: number
+  quantidade: Float16Array
+  unidade_medida: number
 }
+
 
 export default function Painel() {
   const [produtos, setProdutos] = useState<Produto[]>([])
 
   useEffect(() => {
-    const simulados = Array.from({ length: 12 }).map((_, i) => ({
-      nome: `Cerveja ${i + 1}`,
-      quantidade: Math.floor(Math.random() * 50 + 1),
-    }))
-    setProdutos(simulados)
+    fetch('http://localhost:3000/produtos')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Erro ao buscar produtos')
+        }
+        return res.json()
+      })
+      .then((data) => setProdutos(data))
+      .catch((err) => console.error('Erro:', err))
   }, [])
 
   return (
     <div className="painel-container">
-      {/* Topo com menu e logo */}
       <header className="painel-header">
         <nav className="painel-menu">
           <button>Produtos</button>
@@ -35,18 +44,24 @@ export default function Painel() {
         </div>
       </header>
 
-      {/* Conteúdo principal */}
       <main className="painel-conteudo">
         <div className="painel-conteudo-wrapper">
           <section className="produtos-painel">
             <h2 className="produtos-titulo">Produtos Cadastrados</h2>
             <div className="painel-box-scroll">
               <div className="painel-grid">
-                {produtos.map((produto, i) => (
-                  <div className="card-produto" key={i}>
-                    <img src="/cerveja.png" alt={produto.nome} className="img-produto" />
+                {produtos.map((produto) => (
+                  <div className="card-produto" key={produto.id}>
+                    <img
+                      src="/cerveja.png"
+                      alt={produto.nome}
+                      className="img-produto"
+                    />
                     <strong>{produto.nome}</strong>
-                    <span>Qtd: {produto.quantidade}</span>
+                    <span>{produto.quantidade} {produto.unidade_medida}</span>
+                    
+                    <span>{produto.estoque} unidades em estoque</span>
+                    
                   </div>
                 ))}
               </div>
@@ -54,9 +69,6 @@ export default function Painel() {
           </section>
         </div>
       </main>
-
-      {/* Botão fixo no canto inferior direito */}
-      <button className="botao-cadastrar">Cadastrar</button>
     </div>
   )
 }
