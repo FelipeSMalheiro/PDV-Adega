@@ -7,6 +7,12 @@ import { PrismaService } from './prisma/prisma.service';
 import { JwtModule } from '@nestjs/jwt';
 import { CategoriasController } from './categorias/categorias.controller';
 import { CategoriasService } from './categorias/categorias.service';
+import { ProdutosController } from './produtos/produtos.controller';
+import { ProdutosService } from './produtos/produtos.service';
+import { PedidosController } from './pedidos/pedidos.controller';
+import { PedidosService } from './pedidos/pedidos.service';
+import { RelatoriosController } from './relatorios/relatorios.controller';
+import { RelatoriosService } from './relatorios/relatorios.service';
 
 @Module({
   imports: [
@@ -15,8 +21,12 @@ import { CategoriasService } from './categorias/categorias.service';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  controllers: [FuncionariosController, AuthController, CategoriasController],
-  providers: [FuncionariosService, AuthService, PrismaService, CategoriasService],
+  
+  controllers: [FuncionariosController, AuthController, CategoriasController, 
+    ProdutosController, PedidosController, RelatoriosController],
+
+  providers: [FuncionariosService, AuthService, PrismaService, CategoriasService, 
+    ProdutosService, PedidosService, RelatoriosService],
 })
 export class AppModule {}
 
