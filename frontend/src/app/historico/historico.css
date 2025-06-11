@@ -1,0 +1,82 @@
+@import '../painel/painel.css';
+
+.historico-wrapper {
+  padding: 40px;
+  height: calc(100vh - 100px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico-titulo {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.tabela-historico {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+.tabela-historico table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-historico th,
+.tabela-historico td {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tabela-historico th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.historico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.historico-titulo {
+  font-size: 1.5rem;
+}
+
+.historico-pesquisa {
+  display: flex;
+  gap: 8px;
+}
+
+.historico-pesquisa input {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 220px;
+}
+
+.historico-pesquisa button {
+  padding: 8px 12px;
+  background-color: #ae7629;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.historico-pesquisa button:hover {
+  background-color: #965f1f;
+}

@@ -1,0 +1,73 @@
+.login-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/brinde_smart_malte.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.login-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  z-index: 2;
+}
+
+.login-title {
+  margin-bottom: 2rem;
+  color: #2c1f1f;
+  font-family: Arial;
+}
+
+.login-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #ae7629;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+/* Efeito ao passar o mouse */
+.login-button:hover {
+  background-color: #965f1f; /* tom levemente mais escuro */
+}
+
+/* Efeito ao clicar */
+.login-button:active {
+  background-color: #7e4d17; /* tom ainda mais escuro */
+}
+
+/* Novo: posição da logo frase no canto direito */
+.logo-frase-container {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 300px;
+  height: 300px;
+  z-index: 1;
+}

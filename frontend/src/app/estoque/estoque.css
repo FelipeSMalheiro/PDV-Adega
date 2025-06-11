@@ -1,0 +1,91 @@
+@import '../painel/painel.css';
+
+.painel-conteudo-wrapper {
+  padding: 40px;
+  height: calc(100vh - 100px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.estoque-titulo {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.tabela-estoque {
+  flex: 1;
+  background: #fff;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: auto;
+  font-size: 12px;
+}
+
+.tabela-estoque table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-estoque th,
+.tabela-estoque td {
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.tabela-estoque th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.tabela-estoque tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.btn-estoque {
+  padding: 6px 12px;
+  margin-right: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: white;
+}
+
+.btn-editar {
+  background-color: #2563eb;
+}
+
+.btn-editar:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-excluir {
+  background-color: #dc2626;
+}
+
+.btn-excluir:hover {
+  background-color: #b91c1c;
+}
+
+.botao-cadastrar-cerveja {
+  align-self: center;
+  margin-top: 30px;
+  padding: 16px 32px;
+  background-color: #ae7629;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.botao-cadastrar-cerveja:hover {
+  background-color: #965f1f;
+}
