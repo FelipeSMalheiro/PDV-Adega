@@ -47,18 +47,6 @@ export default function Historico() {
 
   return (
     <div className="painel-container">
-      <header className="painel-header">
-        <nav className="painel-menu">
-          <button>Produtos</button>
-          <button>Funcionários</button>
-          <button>Estoque</button>
-          <button>Histórico</button>
-        </nav>
-        <div className="painel-logo">
-          <Image src="/logo.png" alt="Logo" width={80} height={80} />
-        </div>
-      </header>
-
       <main className="painel-conteudo">
         <div className="historico-wrapper">
           <div className="historico-header">
