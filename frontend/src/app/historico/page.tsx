@@ -26,24 +26,54 @@ type Pedido = {
 
 export default function Historico() {
   const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [filtro, setFiltro] = useState('');
+  const [campo, setCampo] = useState('funcionario');
+  const [resultados, setResultados] = useState<Pedido[]>([]);
 
   useEffect(() => {
-  fetch('http://localhost:3000/historico')
-    .then(res => res.json())
-    .then(data => {
-      console.log('Resposta da API:', data);
-      if (Array.isArray(data)) {
-        setPedidos(data);
-      } else {
-        console.error('Formato inválido:', data);
+    fetch('http://localhost:3000/historico')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPedidos(data);
+          setResultados(data);
+        } else {
+          setPedidos([]);
+          setResultados([]);
+        }
+      })
+      .catch(() => {
         setPedidos([]);
+        setResultados([]);
+      });
+  }, []);
+
+  const aplicarFiltro = () => {
+    const termo = filtro.toLowerCase();
+
+    const filtrado = pedidos.filter(p => {
+      switch (campo) {
+        case 'funcionario':
+          return p.funcionario.nome.toLowerCase().includes(termo);
+        case 'cpf':
+          return (p.cpf_comprador || '').toLowerCase().includes(termo);
+        case 'total':
+          return p.total.toFixed(2).includes(termo);
+        case 'pagamento':
+          return p.forma_pagamento.toLowerCase().includes(termo);
+        default:
+          return true;
       }
-    })
-    .catch(err => {
-      console.error('Erro ao buscar pedidos:', err);
-      setPedidos([]);
     });
-}, []);
+
+    setResultados(filtrado);
+  };
+
+  const limparFiltro = () => {
+    setFiltro('');
+    setCampo('funcionario');
+    setResultados(pedidos);
+  };
 
   return (
     <div className="painel-container">
@@ -53,9 +83,22 @@ export default function Historico() {
             <h2 className="historico-titulo">Histórico de Pedidos</h2>
 
             <div className="historico-pesquisa">
-              <input type="text" placeholder="Pesquisar..." />
-              <button>🔍</button>
-              <button>⚙️</button>
+              <select value={campo} onChange={(e) => setCampo(e.target.value)}>
+                <option value="funcionario">Funcionário</option>
+                <option value="cpf">CPF</option>
+                <option value="total">Total (R$)</option>
+                <option value="pagamento">Forma de Pagamento</option>
+              </select>
+
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                value={filtro}
+                onChange={(e) => setFiltro(e.target.value)}
+              />
+
+              <button onClick={aplicarFiltro}>🔍</button>
+              <button onClick={limparFiltro} className="btn-limpar">❌</button>
             </div>
           </div>
 
@@ -72,7 +115,7 @@ export default function Historico() {
                 </tr>
               </thead>
               <tbody>
-                {pedidos.map((pedido) => (
+                {resultados.map((pedido) => (
                   <tr key={pedido.id}>
                     <td>{pedido.funcionario?.nome || '—'}</td>
                     <td>{new Date(pedido.data_pedido).toLocaleString('pt-BR')}</td>
@@ -94,5 +137,5 @@ export default function Historico() {
         </div>
       </main>
     </div>
-  )
+  );
 }
