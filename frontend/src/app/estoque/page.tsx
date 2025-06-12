@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import './estoque.css'
 
 interface Produto {
@@ -14,6 +13,7 @@ interface Produto {
   unidade_medida: string
   ativo: boolean
   id_categoria: number
+  imagem_url?: string
   precoFormatado?: string
 }
 
@@ -178,6 +178,7 @@ export default function Produtos() {
 
             <input name="nome" placeholder="Nome" value={form.nome || ''} onChange={handleChange} />
             <input name="descricao" placeholder="Descrição" value={form.descricao || ''} onChange={handleChange} />
+            <input name="imagem_url" placeholder="URL da Imagem" value={form.imagem_url || ''} onChange={handleChange} />
             <input name="preco" placeholder="Preço (ex: 9,99)" value={form.precoFormatado || ''} onChange={handleChange} />
             <input name="estoque" type="number" placeholder="Estoque" value={form.estoque || ''} onChange={handleChange} />
             <input name="quantidade" type="number" placeholder="Quantidade (ml, kg, etc)" value={form.quantidade || ''} onChange={handleChange} />
@@ -204,4 +205,5 @@ export default function Produtos() {
     </div>
   )
 }
+
 

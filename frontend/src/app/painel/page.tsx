@@ -11,6 +11,7 @@ type Produto = {
   estoque: number
   quantidade: number
   unidade_medida: string
+  imagem_url?: string
 }
 
 export default function Painel() {
@@ -30,7 +31,6 @@ export default function Painel() {
 
   return (
     <div className="painel-container">
-
       <main className="painel-conteudo">
         <div className="painel-conteudo-wrapper">
           <section className="produtos-painel">
@@ -39,7 +39,11 @@ export default function Painel() {
               <div className="painel-grid">
                 {produtos.map((produto) => (
                   <div className="card-produto" key={produto.id}>
-                    <img src="/cerveja.png" alt={produto.nome} className="img-produto" />
+                    <img
+                      src={produto.imagem_url || '/cerveja.png'}
+                      alt={produto.nome}
+                      className="img-produto"
+                    />
                     <strong>{produto.nome}</strong>
                     <span>{produto.quantidade} {produto.unidade_medida}</span>
                     <span>{produto.estoque} unidades em estoque</span>
@@ -63,4 +67,8 @@ export default function Painel() {
     </div>
   )
 }
+
+
+
+
 

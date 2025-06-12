@@ -10,6 +10,7 @@ type Produto = {
   estoque: number
   quantidade: number
   unidade_medida: string
+  imagem_url?: string
 }
 
 type ItemPedido = {
@@ -72,43 +73,42 @@ export default function CriarPedidoModal({ aberto, onFechar, onSalvo }: Props) {
     setItens(itens.filter((i) => i.id_produto !== id_produto))
   }
 
-const salvarPedido = async () => {
-  const id_funcionario = Number(localStorage.getItem('id_funcionario'))
+  const salvarPedido = async () => {
+    const id_funcionario = Number(localStorage.getItem('id_funcionario'))
 
-  if (!id_funcionario || isNaN(id_funcionario)) {
-    alert('Funcionário não autenticado. Faça login novamente.')
-    return
+    if (!id_funcionario || isNaN(id_funcionario)) {
+      alert('Funcionário não autenticado. Faça login novamente.')
+      return
+    }
+
+    if (itens.length === 0 || !formaPagamento.trim()) {
+      alert('Preencha todos os campos obrigatórios.')
+      return
+    }
+
+    const pedido = {
+      id_funcionario,
+      cpf_comprador: cpfComprador || undefined,
+      forma_pagamento: formaPagamento,
+      itens,
+    }
+
+    try {
+      const res = await fetch('http://localhost:3000/pedidos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pedido),
+      })
+
+      if (!res.ok) throw new Error(await res.text())
+
+      alert('Pedido criado com sucesso!')
+      onSalvo()
+      onFechar()
+    } catch (err) {
+      alert('Erro ao salvar pedido: ' + err)
+    }
   }
-
-  if (itens.length === 0 || !formaPagamento.trim()) {
-    alert('Preencha todos os campos obrigatórios.')
-    return
-  }
-
-  const pedido = {
-    id_funcionario,
-    cpf_comprador: cpfComprador || undefined, // opcional
-    forma_pagamento: formaPagamento,
-    itens,
-  }
-
-  try {
-    const res = await fetch('http://localhost:3000/pedidos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(pedido),
-    })
-
-    if (!res.ok) throw new Error(await res.text())
-
-    alert('Pedido criado com sucesso!')
-    onSalvo()
-    onFechar()
-  } catch (err) {
-    alert('Erro ao salvar pedido: ' + err)
-  }
-}
-
 
   if (!aberto) return null
 
@@ -130,61 +130,64 @@ const salvarPedido = async () => {
             .filter((p) => p.nome.toLowerCase().includes(filtro.toLowerCase()))
             .map((p) => (
               <div key={p.id} className="produto-linha">
-  <div className="produto-info">
-    <strong>{p.nome}</strong> {p.quantidade} {p.unidade_medida} — {p.estoque} em estoque
-  </div>
-  <input
-    type="number"
-    min={1}
-    max={p.estoque}
-    className="produto-quantidade"
-    value={quantidades[p.id] || ''}
-    onChange={(e) =>
-      setQuantidades({
-        ...quantidades,
-        [p.id]: parseInt(e.target.value) || 0
-      })
-    }
-  />
-  <button className="produto-adicionar" onClick={() => adicionarItem(p.id)}>
-    Adicionar
-  </button>
-</div>
-
+                <img
+                  src={p.imagem_url || '/cerveja.png'}
+                  alt={p.nome}
+                  className="img-produto"
+                  style={{ width: 40, height: 40, objectFit: 'contain', marginRight: 10 }}
+                />
+                <div className="produto-info">
+                  <strong>{p.nome}</strong> {p.quantidade} {p.unidade_medida} — {p.estoque} em estoque
+                </div>
+                <input
+                  type="number"
+                  min={1}
+                  max={p.estoque}
+                  className="produto-quantidade"
+                  value={quantidades[p.id] || ''}
+                  onChange={(e) =>
+                    setQuantidades({
+                      ...quantidades,
+                      [p.id]: parseInt(e.target.value) || 0
+                    })
+                  }
+                />
+                <button className="produto-adicionar" onClick={() => adicionarItem(p.id)}>
+                  Adicionar
+                </button>
+              </div>
             ))}
         </div>
 
         <h4>Itens do Pedido</h4>
-
-<table className="tabela-itens">
-  <thead>
-    <tr>
-      <th>Produto</th>
-      <th>Quantidade</th>
-      <th>Ação</th>
-    </tr>
-  </thead>
-  <tbody>
-    {itens.map((item) => {
-      const produto = produtos.find((p) => p.id === item.id_produto)
-      return (
-        <tr key={item.id_produto}>
-          <td>{produto?.nome}</td>
-          <td style={{ textAlign: 'center' }}>{item.quantidade}</td>
-          <td>
-            <button
-              className="produto-remover"
-              onClick={() => removerItem(item.id_produto)}
-            >
-              Remover
-            </button>
-          </td>
-        </tr>
-      )
-    })}
-  </tbody>
-</table>
-
+        <table className="tabela-itens">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Quantidade</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {itens.map((item) => {
+              const produto = produtos.find((p) => p.id === item.id_produto)
+              return (
+                <tr key={item.id_produto}>
+                  <td>{produto?.nome}</td>
+                  <td style={{ textAlign: 'center' }}>{item.quantidade}</td>
+                  <td>
+                    <button
+                      className="produto-remover"
+                      onClick={() => removerItem(item.id_produto)}
+                    >
+                      Remover
+                    </button>
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
 
         <input
           placeholder="CPF do comprador (opcional)"
@@ -206,4 +209,8 @@ const salvarPedido = async () => {
     </div>
   )
 }
+
+
+
+
 
