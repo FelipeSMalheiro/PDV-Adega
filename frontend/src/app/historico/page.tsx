@@ -1,34 +1,106 @@
 'use client'
 
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import './historico.css'
 
+type Item = {
+  produto: {
+    nome: string
+  }
+  quantidade: number
+  preco_unitario: number
+};
+
+type Pedido = {
+  id: number
+  data_pedido: string
+  cpf_comprador?: string
+  total: number
+  forma_pagamento: string
+  funcionario: {
+    nome: string
+  }
+  itensPedido: Item[]
+};
+
 export default function Historico() {
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+  const [filtro, setFiltro] = useState('');
+  const [campo, setCampo] = useState('funcionario');
+  const [resultados, setResultados] = useState<Pedido[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3000/historico')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setPedidos(data);
+          setResultados(data);
+        } else {
+          setPedidos([]);
+          setResultados([]);
+        }
+      })
+      .catch(() => {
+        setPedidos([]);
+        setResultados([]);
+      });
+  }, []);
+
+  const aplicarFiltro = () => {
+    const termo = filtro.toLowerCase();
+
+    const filtrado = pedidos.filter(p => {
+      switch (campo) {
+        case 'funcionario':
+          return p.funcionario.nome.toLowerCase().includes(termo);
+        case 'cpf':
+          return (p.cpf_comprador || '').toLowerCase().includes(termo);
+        case 'total':
+          return p.total.toFixed(2).includes(termo);
+        case 'pagamento':
+          return p.forma_pagamento.toLowerCase().includes(termo);
+        default:
+          return true;
+      }
+    });
+
+    setResultados(filtrado);
+  };
+
+  const limparFiltro = () => {
+    setFiltro('');
+    setCampo('funcionario');
+    setResultados(pedidos);
+  };
+
   return (
     <div className="painel-container">
-      <header className="painel-header">
-        <nav className="painel-menu">
-          <button>Produtos</button>
-          <button>Funcionários</button>
-          <button>Estoque</button>
-          <button>Histórico</button>
-        </nav>
-        <div className="painel-logo">
-          <Image src="/logo.png" alt="Logo" width={80} height={80} />
-        </div>
-      </header>
-
       <main className="painel-conteudo">
         <div className="historico-wrapper">
           <div className="historico-header">
-  <h2 className="historico-titulo">Histórico de Pedidos</h2>
+            <h2 className="historico-titulo">Histórico de Pedidos</h2>
 
-  <div className="historico-pesquisa">
-    <input type="text" placeholder="Pesquisar..." />
-    <button>🔍</button> {/* Ícone de lupa virá depois */}
-    <button>⚙️</button> {/* Ícone de filtro virá depois */}
-  </div>
-</div>
+            <div className="historico-pesquisa">
+              <select value={campo} onChange={(e) => setCampo(e.target.value)}>
+                <option value="funcionario">Funcionário</option>
+                <option value="cpf">CPF</option>
+                <option value="total">Total (R$)</option>
+                <option value="pagamento">Forma de Pagamento</option>
+              </select>
+
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                value={filtro}
+                onChange={(e) => setFiltro(e.target.value)}
+              />
+
+              <button onClick={aplicarFiltro}>🔍</button>
+              <button onClick={limparFiltro} className="btn-limpar">❌</button>
+            </div>
+          </div>
 
           <div className="tabela-historico">
             <table>
@@ -43,32 +115,27 @@ export default function Historico() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>João Silva</td>
-                  <td>2025-06-01 14:32</td>
-                  <td>123.456.789-00</td>
-                  <td>42.00</td>
-                  <td>Cartão</td>
-                  <td>
-                    - Cerveja IPA (2x R$9,90)<br/>
-                    - Pilsen 600ml (1x R$8,50)
-                  </td>
-                </tr>
-                <tr>
-                  <td>Ana Souza</td>
-                  <td>2025-06-02 18:10</td>
-                  <td>987.654.321-00</td>
-                  <td>24.00</td>
-                  <td>Dinheiro</td>
-                  <td>
-                    - Stout 500ml (2x R$12,00)
-                  </td>
-                </tr>
+                {resultados.map((pedido) => (
+                  <tr key={pedido.id}>
+                    <td>{pedido.funcionario?.nome || '—'}</td>
+                    <td>{new Date(pedido.data_pedido).toLocaleString('pt-BR')}</td>
+                    <td>{pedido.cpf_comprador || '—'}</td>
+                    <td>{pedido.total.toFixed(2)}</td>
+                    <td>{pedido.forma_pagamento}</td>
+                    <td>
+                      {pedido.itensPedido.map((item, idx) => (
+                        <div key={idx}>
+                          - {item.produto.nome} ({item.quantidade}x R${item.preco_unitario.toFixed(2)})
+                        </div>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </main>
     </div>
-  )
+  );
 }

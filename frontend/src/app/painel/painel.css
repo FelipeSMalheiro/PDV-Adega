@@ -9,11 +9,11 @@
 }
 
 .painel-menu {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
 }
 
 /* Estilo dos botões do menu */
@@ -291,5 +291,50 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Tornar menu responsivo */
+.painel-menu {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 1rem;
+}
+
+.painel-menu button {
+  flex: 1 1 120px; /* Cresce e encolhe conforme o espaço, mínimo 120px */
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  background-color: #ae7629;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.painel-menu button:hover {
+  background-color: #965f1f;
+}
+
+/* Logo do painel adaptável */
+.painel-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+@media (max-width: 768px) {
+  .painel-menu {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .painel-logo img {
+    width: 60px !important;
+    height: 60px !important;
   }
 }

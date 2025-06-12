@@ -43,4 +43,9 @@ export class PedidosController {
       );
     }
   }
+
+  @Get('historico')
+  async getHistorico(): Promise<Pedido[]> {
+    return this.pedidosService.findAll(); // 🔁 uso direto do service
+  }
 }

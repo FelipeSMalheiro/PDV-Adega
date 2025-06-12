@@ -1,4 +1,6 @@
 import './globals.css'
+import './painel/painel.css'
+import Cabecalho from './painel/cabecalho'
 
 export const metadata = {
   title: 'Smart Malte',
@@ -14,8 +16,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="pt-BR">
+      <body>
+        <Cabecalho />
+        {children}
+      </body>
     </html>
   )
 }

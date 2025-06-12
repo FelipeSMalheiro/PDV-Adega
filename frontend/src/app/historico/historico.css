@@ -80,3 +80,40 @@
 .historico-pesquisa button:hover {
   background-color: #965f1f;
 }
+
+.historico-pesquisa select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: white;
+  color: #333;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 140 140' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 50 l60 60 60 -60' stroke='%23999999' stroke-width='15' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.historico-pesquisa select:focus {
+  outline: none;
+  border-color: #ae7629;
+}
+
+.historico-pesquisa .btn-limpar {
+  padding: 8px 12px;
+  background-color: #ccc;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.historico-pesquisa .btn-limpar:hover {
+  background-color: #999;
+}
