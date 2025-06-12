@@ -1,9 +1,50 @@
 'use client'
 
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import './historico.css'
 
+type Item = {
+  produto: {
+    nome: string
+  }
+  quantidade: number
+  preco_unitario: number
+};
+
+type Pedido = {
+  id: number
+  data_pedido: string
+  cpf_comprador?: string
+  total: number
+  forma_pagamento: string
+  funcionario: {
+    nome: string
+  }
+  itensPedido: Item[]
+};
+
 export default function Historico() {
+  const [pedidos, setPedidos] = useState<Pedido[]>([]);
+
+  useEffect(() => {
+  fetch('http://localhost:3000/historico')
+    .then(res => res.json())
+    .then(data => {
+      console.log('Resposta da API:', data);
+      if (Array.isArray(data)) {
+        setPedidos(data);
+      } else {
+        console.error('Formato inválido:', data);
+        setPedidos([]);
+      }
+    })
+    .catch(err => {
+      console.error('Erro ao buscar pedidos:', err);
+      setPedidos([]);
+    });
+}, []);
+
   return (
     <div className="painel-container">
       <header className="painel-header">
@@ -21,14 +62,14 @@ export default function Historico() {
       <main className="painel-conteudo">
         <div className="historico-wrapper">
           <div className="historico-header">
-  <h2 className="historico-titulo">Histórico de Pedidos</h2>
+            <h2 className="historico-titulo">Histórico de Pedidos</h2>
 
-  <div className="historico-pesquisa">
-    <input type="text" placeholder="Pesquisar..." />
-    <button>🔍</button> {/* Ícone de lupa virá depois */}
-    <button>⚙️</button> {/* Ícone de filtro virá depois */}
-  </div>
-</div>
+            <div className="historico-pesquisa">
+              <input type="text" placeholder="Pesquisar..." />
+              <button>🔍</button>
+              <button>⚙️</button>
+            </div>
+          </div>
 
           <div className="tabela-historico">
             <table>
@@ -43,27 +84,22 @@ export default function Historico() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>João Silva</td>
-                  <td>2025-06-01 14:32</td>
-                  <td>123.456.789-00</td>
-                  <td>42.00</td>
-                  <td>Cartão</td>
-                  <td>
-                    - Cerveja IPA (2x R$9,90)<br/>
-                    - Pilsen 600ml (1x R$8,50)
-                  </td>
-                </tr>
-                <tr>
-                  <td>Ana Souza</td>
-                  <td>2025-06-02 18:10</td>
-                  <td>987.654.321-00</td>
-                  <td>24.00</td>
-                  <td>Dinheiro</td>
-                  <td>
-                    - Stout 500ml (2x R$12,00)
-                  </td>
-                </tr>
+                {pedidos.map((pedido) => (
+                  <tr key={pedido.id}>
+                    <td>{pedido.funcionario?.nome || '—'}</td>
+                    <td>{new Date(pedido.data_pedido).toLocaleString('pt-BR')}</td>
+                    <td>{pedido.cpf_comprador || '—'}</td>
+                    <td>{pedido.total.toFixed(2)}</td>
+                    <td>{pedido.forma_pagamento}</td>
+                    <td>
+                      {pedido.itensPedido.map((item, idx) => (
+                        <div key={idx}>
+                          - {item.produto.nome} ({item.quantidade}x R${item.preco_unitario.toFixed(2)})
+                        </div>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

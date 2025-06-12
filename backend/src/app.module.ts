@@ -13,6 +13,7 @@ import { PedidosController } from './pedidos/pedidos.controller';
 import { PedidosService } from './pedidos/pedidos.service';
 import { RelatoriosController } from './relatorios/relatorios.controller';
 import { RelatoriosService } from './relatorios/relatorios.service';
+import { HistoricoController } from './historico/historico.controller';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { RelatoriosService } from './relatorios/relatorios.service';
   ],
   
   controllers: [FuncionariosController, AuthController, CategoriasController, 
-    ProdutosController, PedidosController, RelatoriosController],
+    ProdutosController, PedidosController, RelatoriosController, HistoricoController],
 
   providers: [FuncionariosService, AuthService, PrismaService, CategoriasService, 
     ProdutosService, PedidosService, RelatoriosService],
