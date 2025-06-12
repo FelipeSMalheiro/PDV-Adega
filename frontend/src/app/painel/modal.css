@@ -40,3 +40,100 @@
   padding: 0.6rem 1.2rem;
   font-weight: bold;
 }
+
+/* Novo campo para quantidade no modal de pedido */
+.input-quantidade {
+  width: 60px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Estilo para a linha de produto com campo de quantidade */
+.modal .produto-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 10px;
+}
+
+/* Estilo do nome do produto e detalhes */
+.modal .produto-info {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/* Input numérico de quantidade */
+.modal .produto-quantidade {
+  width: 60px;
+  padding: 6px;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Botão adicionar */
+.modal .produto-adicionar {
+  background-color: #ae7629;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.modal .produto-adicionar:hover {
+  background-color: #965f1f;
+}
+
+/* Botão remover (estilo similar ao adicionar, porém com cor vermelha) */
+.modal .produto-remover {
+  background-color: #b23c3c;
+  color: white;
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 10px;
+}
+
+.modal .produto-remover:hover {
+  background-color: #8f2d2d;
+}
+
+/* Tabela de itens do pedido */
+.tabela-itens {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tabela-itens th,
+.tabela-itens td {
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+}
+
+.tabela-itens th {
+  background-color: #f0f0f0;
+  text-align: left;
+}
+
+.tabela-itens td {
+  background-color: #fff;
+}
+
+.tabela-itens td button {
+  display: block;
+  margin: 0 auto;
+}

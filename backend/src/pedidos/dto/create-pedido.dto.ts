@@ -25,3 +25,4 @@ export class CreatePedidoDto {
   @Type(() => ItemPedidoInput)
   itens: ItemPedidoInput[];
 }
+

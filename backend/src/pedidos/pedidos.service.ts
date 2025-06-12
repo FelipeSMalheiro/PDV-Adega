@@ -17,30 +17,17 @@ export class PedidosService {
     let total = 0;
 
     try {
-      // Validação dos itens
       for (const item of itens) {
-        const produto = await this.prisma.produto.findUnique({
-          where: { id: item.id_produto },
-        });
+        const produto = await this.prisma.produto.findUnique({ where: { id: item.id_produto } });
 
-        if (!produto) {
-          throw new NotFoundException(`Produto com ID ${item.id_produto} não encontrado.`);
-        }
-
-        if (!produto.ativo) {
-          throw new BadRequestException(`Produto "${produto.nome}" está inativo.`);
-        }
-
-        if (produto.estoque < item.quantidade) {
-          throw new BadRequestException(
-            `Estoque insuficiente para o produto "${produto.nome}". Disponível: ${produto.estoque}`,
-          );
-        }
+        if (!produto) throw new NotFoundException(`Produto com ID ${item.id_produto} não encontrado.`);
+        if (!produto.ativo) throw new BadRequestException(`Produto "${produto.nome}" está inativo.`);
+        if (produto.estoque < item.quantidade)
+          throw new BadRequestException(`Estoque insuficiente para "${produto.nome}".`);
 
         total += item.quantidade * produto.preco;
       }
 
-      // Criação do pedido
       const pedido = await this.prisma.pedido.create({
         data: {
           id_funcionario,
@@ -51,7 +38,6 @@ export class PedidosService {
         },
       });
 
-      // Inserção dos itens e atualização de estoque
       for (const item of itens) {
         const produto = await this.prisma.produto.findUnique({ where: { id: item.id_produto } });
 
@@ -66,18 +52,14 @@ export class PedidosService {
 
         await this.prisma.produto.update({
           where: { id: item.id_produto },
-          data: {
-            estoque: produto!.estoque - item.quantidade,
-          },
+          data: { estoque: produto!.estoque - item.quantidade },
         });
       }
 
       return pedido;
     } catch (error) {
       console.error('Erro ao criar pedido:', error);
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
-        throw error;
-      }
+      if (error instanceof NotFoundException || error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException('Erro interno ao processar o pedido.');
     }
   }
@@ -86,9 +68,7 @@ export class PedidosService {
     return this.prisma.pedido.findMany({
       include: {
         funcionario: true,
-        itensPedido: {
-          include: { produto: true },
-        },
+        itensPedido: { include: { produto: true } },
       },
     });
   }
@@ -98,16 +78,12 @@ export class PedidosService {
       where: { id },
       include: {
         funcionario: true,
-        itensPedido: {
-          include: { produto: true },
-        },
+        itensPedido: { include: { produto: true } },
       },
     });
 
-    if (!pedido) {
-      throw new NotFoundException(`Pedido com ID ${id} não encontrado.`);
-    }
-
+    if (!pedido) throw new NotFoundException(`Pedido com ID ${id} não encontrado.`);
     return pedido;
   }
 }
+

@@ -121,10 +121,15 @@ export default function Produtos() {
 
   return (
     <div className="painel-container">
-
       <main className="painel-conteudo">
         <div className="painel-conteudo-wrapper">
           <h2 className="estoque-titulo">Lista de Produtos</h2>
+
+          <div className="acoes-topo" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+            <button className="botao-cadastrar-cerveja" onClick={() => abrirModal()}>
+              Cadastrar Produto
+            </button>
+          </div>
 
           <div className="tabela-estoque">
             <table>
@@ -163,10 +168,6 @@ export default function Produtos() {
               </tbody>
             </table>
           </div>
-
-          <button className="botao-cadastrar-cerveja" onClick={() => abrirModal()}>
-            Cadastrar Produto
-          </button>
         </div>
       </main>
 
@@ -176,45 +177,12 @@ export default function Produtos() {
             <h3>{modoEdicao ? 'Editar Produto' : 'Novo Produto'}</h3>
 
             <input name="nome" placeholder="Nome" value={form.nome || ''} onChange={handleChange} />
-            <input
-              name="descricao"
-              placeholder="Descrição"
-              value={form.descricao || ''}
-              onChange={handleChange}
-            />
-            <input
-              name="preco"
-              placeholder="Preço (ex: 9,99)"
-              value={form.precoFormatado || ''}
-              onChange={handleChange}
-            />
-            <input
-              name="estoque"
-              type="number"
-              placeholder="Estoque"
-              value={form.estoque || ''}
-              onChange={handleChange}
-            />
-            <input
-              name="quantidade"
-              type="number"
-              placeholder="Quantidade (ml, kg, etc)"
-              value={form.quantidade || ''}
-              onChange={handleChange}
-            />
-            <input
-              name="unidade_medida"
-              placeholder="Unidade de medida (ml, kg...)"
-              value={form.unidade_medida || ''}
-              onChange={handleChange}
-            />
-            <input
-              name="id_categoria"
-              type="number"
-              placeholder="ID da categoria"
-              value={form.id_categoria || ''}
-              onChange={handleChange}
-            />
+            <input name="descricao" placeholder="Descrição" value={form.descricao || ''} onChange={handleChange} />
+            <input name="preco" placeholder="Preço (ex: 9,99)" value={form.precoFormatado || ''} onChange={handleChange} />
+            <input name="estoque" type="number" placeholder="Estoque" value={form.estoque || ''} onChange={handleChange} />
+            <input name="quantidade" type="number" placeholder="Quantidade (ml, kg, etc)" value={form.quantidade || ''} onChange={handleChange} />
+            <input name="unidade_medida" placeholder="Unidade de medida (ml, kg...)" value={form.unidade_medida || ''} onChange={handleChange} />
+            <input name="id_categoria" type="number" placeholder="ID da categoria" value={form.id_categoria || ''} onChange={handleChange} />
             <select name="ativo" value={form.ativo?.toString()} onChange={handleChange}>
               <option value="true">Ativo</option>
               <option value="false">Inativo</option>
@@ -236,3 +204,4 @@ export default function Produtos() {
     </div>
   )
 }
+

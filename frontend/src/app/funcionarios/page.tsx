@@ -14,15 +14,10 @@ type Funcionario = {
 const formatarCPF = (cpf: string) => {
   const numeros = cpf.replace(/\D/g, '').slice(0, 11)
 
-  if (numeros.length <= 3) {
-    return numeros
-  } else if (numeros.length <= 6) {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3)}`
-  } else if (numeros.length <= 9) {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`
-  } else {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`
-  }
+  if (numeros.length <= 3) return numeros
+  if (numeros.length <= 6) return `${numeros.slice(0, 3)}.${numeros.slice(3)}`
+  if (numeros.length <= 9) return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`
+  return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`
 }
 
 export default function Funcionarios() {
@@ -112,6 +107,20 @@ export default function Funcionarios() {
           <section className="secao-funcionarios">
             <h2 className="produtos-titulo">Cadastro de Funcionários</h2>
 
+            {/* Botão reposicionado para cima e à direita */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+              <button
+                className="botao-novo-usuario"
+                onClick={() => {
+                  setEditando(null)
+                  setForm({ nome: '', cpf: '', senha: '', cargo: '', ativo: true })
+                  setShowModal(true)
+                }}
+              >
+                Cadastrar Novo Usuário
+              </button>
+            </div>
+
             <div className="tabela-funcionarios">
               <table>
                 <thead>
@@ -158,17 +167,6 @@ export default function Funcionarios() {
               </table>
             </div>
           </section>
-
-          <button
-            className="botao-novo-usuario"
-            onClick={() => {
-              setEditando(null)
-              setForm({ nome: '', cpf: '', senha: '', cargo: '', ativo: true })
-              setShowModal(true)
-            }}
-          >
-            Cadastrar Novo Usuário
-          </button>
 
           {showModal && (
             <div className="modal-overlay">

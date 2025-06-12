@@ -2,21 +2,21 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import {jwtDecode} from 'jwt-decode'
 import Image from 'next/image'
 import './login.css'
 
 const formatarCPF = (cpf: string) => {
   const numeros = cpf.replace(/\D/g, '').slice(0, 11)
+  if (numeros.length <= 3) return numeros
+  if (numeros.length <= 6) return `${numeros.slice(0, 3)}.${numeros.slice(3)}`
+  if (numeros.length <= 9) return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`
+  return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`
+}
 
-  if (numeros.length <= 3) {
-    return numeros
-  } else if (numeros.length <= 6) {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3)}`
-  } else if (numeros.length <= 9) {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`
-  } else {
-    return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9)}`
-  }
+type TokenPayload = {
+  sub: number
+  nome: string
 }
 
 export default function LoginPage() {
@@ -32,28 +32,18 @@ export default function LoginPage() {
         body: JSON.stringify({ cpf, senha }),
       })
 
-      if (!res.ok) {
-        const erro = await res.text()
-        throw new Error(erro || 'Erro ao fazer login')
-      }
+      if (!res.ok) throw new Error(await res.text())
 
       const data = await res.json()
-
-      // Armazena token e opcionalmente o ID do usuário
       localStorage.setItem('token', data.access_token)
 
-      // Redireciona
+      const payload = jwtDecode<TokenPayload>(data.access_token)
+      localStorage.setItem('id_funcionario', String(payload.sub))
+      localStorage.setItem('nome_funcionario', payload.nome)
+
       router.push('/painel')
     } catch (err: any) {
       alert('Erro ao fazer login: ' + err.message)
-    }
-  }
-
-  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valor = e.target.value
-    const numeros = valor.replace(/\D/g, '')
-    if (numeros.length <= 11) {
-      setCpf(formatarCPF(numeros))
     }
   }
 
@@ -66,7 +56,11 @@ export default function LoginPage() {
           type="text"
           placeholder="CPF"
           value={cpf}
-          onChange={handleCpfChange}
+          onChange={(e) => {
+            const valor = e.target.value
+            const numeros = valor.replace(/\D/g, '')
+            if (numeros.length <= 11) setCpf(formatarCPF(numeros))
+          }}
           className="login-input"
           maxLength={14}
           inputMode="numeric"
@@ -76,7 +70,7 @@ export default function LoginPage() {
           type="password"
           placeholder="Senha"
           value={senha}
-          onChange={e => setSenha(e.target.value)}
+          onChange={(e) => setSenha(e.target.value)}
           className="login-input"
         />
 
@@ -86,14 +80,10 @@ export default function LoginPage() {
       </div>
 
       <div className="logo-frase-container">
-        <Image
-          src="/logo_frase.png"
-          alt="Logo Frase"
-          fill
-          style={{ objectFit: 'contain' }}
-        />
+        <Image src="/logo_frase.png" alt="Logo Frase" fill style={{ objectFit: 'contain' }} />
       </div>
     </div>
   )
 }
+
 

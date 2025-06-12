@@ -1,14 +1,15 @@
 'use client'
 
-import { ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import './modal.css'
 
 type Produto = {
-  unidade_medida: ReactNode
-  quantidade: ReactNode
   id: number
   nome: string
   preco: number
   estoque: number
+  quantidade: number
+  unidade_medida: string
 }
 
 type ItemPedido = {
@@ -28,6 +29,7 @@ export default function CriarPedidoModal({ aberto, onFechar, onSalvo }: Props) {
   const [filtro, setFiltro] = useState('')
   const [cpfComprador, setCpfComprador] = useState('')
   const [formaPagamento, setFormaPagamento] = useState('')
+  const [quantidades, setQuantidades] = useState<{ [id: number]: number }>({})
 
   useEffect(() => {
     if (aberto) {
@@ -39,52 +41,74 @@ export default function CriarPedidoModal({ aberto, onFechar, onSalvo }: Props) {
   }, [aberto])
 
   const adicionarItem = (id_produto: number) => {
-    const existente = itens.find((i) => i.id_produto === id_produto)
+    const produto = produtos.find(p => p.id === id_produto)
+    const quantidade = quantidades[id_produto] || 0
+
+    if (!produto) return
+    if (quantidade <= 0) {
+      alert('Informe uma quantidade válida.')
+      return
+    }
+    if (quantidade > produto.estoque) {
+      alert(`Quantidade excede o estoque disponível (${produto.estoque})`)
+      return
+    }
+
+    const existente = itens.find(i => i.id_produto === id_produto)
     if (existente) {
-      setItens(itens.map((i) =>
+      setItens(itens.map(i =>
         i.id_produto === id_produto
-          ? { ...i, quantidade: i.quantidade + 1 }
+          ? { ...i, quantidade: i.quantidade + quantidade }
           : i
       ))
     } else {
-      setItens([...itens, { id_produto, quantidade: 1 }])
+      setItens([...itens, { id_produto, quantidade }])
     }
+
+    setQuantidades({ ...quantidades, [id_produto]: 0 })
   }
 
   const removerItem = (id_produto: number) => {
     setItens(itens.filter((i) => i.id_produto !== id_produto))
   }
 
-  const salvarPedido = async () => {
-    const id_funcionario = parseInt(localStorage.getItem('id_funcionario') || '0')
-    if (!id_funcionario || itens.length === 0 || !formaPagamento) {
-      alert('Preencha todos os campos obrigatórios.')
-      return
-    }
+const salvarPedido = async () => {
+  const id_funcionario = Number(localStorage.getItem('id_funcionario'))
 
-    const pedido = {
-      id_funcionario,
-      cpf_comprador: cpfComprador,
-      forma_pagamento: formaPagamento,
-      itens
-    }
-
-    try {
-      const res = await fetch('http://localhost:3000/pedidos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pedido)
-      })
-
-      if (!res.ok) throw new Error(await res.text())
-
-      alert('Pedido criado com sucesso!')
-      onSalvo()
-      onFechar()
-    } catch (err) {
-      alert('Erro ao salvar pedido: ' + err)
-    }
+  if (!id_funcionario || isNaN(id_funcionario)) {
+    alert('Funcionário não autenticado. Faça login novamente.')
+    return
   }
+
+  if (itens.length === 0 || !formaPagamento.trim()) {
+    alert('Preencha todos os campos obrigatórios.')
+    return
+  }
+
+  const pedido = {
+    id_funcionario,
+    cpf_comprador: cpfComprador || undefined, // opcional
+    forma_pagamento: formaPagamento,
+    itens,
+  }
+
+  try {
+    const res = await fetch('http://localhost:3000/pedidos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(pedido),
+    })
+
+    if (!res.ok) throw new Error(await res.text())
+
+    alert('Pedido criado com sucesso!')
+    onSalvo()
+    onFechar()
+  } catch (err) {
+    alert('Erro ao salvar pedido: ' + err)
+  }
+}
+
 
   if (!aberto) return null
 
@@ -102,49 +126,76 @@ export default function CriarPedidoModal({ aberto, onFechar, onSalvo }: Props) {
         />
 
         <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '1rem' }}>
-  {filtro && produtos
-    .filter((p) => p.nome.toLowerCase().includes(filtro.toLowerCase()))
-    .map((p) => (
-      <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-        <span>
-  <strong>{p.nome}</strong> {p.quantidade} {p.unidade_medida} — {p.estoque} unidades em estoque
-</span>
-
-        <button onClick={() => adicionarItem(p.id)} style={{ marginLeft: 10 }}>
-          Adicionar
-        </button>
-      </div>
-    ))}
+          {filtro && produtos
+            .filter((p) => p.nome.toLowerCase().includes(filtro.toLowerCase()))
+            .map((p) => (
+              <div key={p.id} className="produto-linha">
+  <div className="produto-info">
+    <strong>{p.nome}</strong> {p.quantidade} {p.unidade_medida} — {p.estoque} em estoque
+  </div>
+  <input
+    type="number"
+    min={1}
+    max={p.estoque}
+    className="produto-quantidade"
+    value={quantidades[p.id] || ''}
+    onChange={(e) =>
+      setQuantidades({
+        ...quantidades,
+        [p.id]: parseInt(e.target.value) || 0
+      })
+    }
+  />
+  <button className="produto-adicionar" onClick={() => adicionarItem(p.id)}>
+    Adicionar
+  </button>
 </div>
 
+            ))}
+        </div>
 
         <h4>Itens do Pedido</h4>
-        <ul>
-          {itens.map((item) => {
-            const produto = produtos.find((p) => p.id === item.id_produto)
-            return (
-              <li key={item.id_produto}>
-                {produto?.nome} - Quantidade: {item.quantidade}
-                <button onClick={() => removerItem(item.id_produto)} style={{ marginLeft: 10 }}>
-                  Remover
-                </button>
-              </li>
-            )
-          })}
-        </ul>
+
+<table className="tabela-itens">
+  <thead>
+    <tr>
+      <th>Produto</th>
+      <th>Quantidade</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+    {itens.map((item) => {
+      const produto = produtos.find((p) => p.id === item.id_produto)
+      return (
+        <tr key={item.id_produto}>
+          <td>{produto?.nome}</td>
+          <td style={{ textAlign: 'center' }}>{item.quantidade}</td>
+          <td>
+            <button
+              className="produto-remover"
+              onClick={() => removerItem(item.id_produto)}
+            >
+              Remover
+            </button>
+          </td>
+        </tr>
+      )
+    })}
+  </tbody>
+</table>
+
 
         <input
           placeholder="CPF do comprador (opcional)"
           value={cpfComprador}
           onChange={(e) => setCpfComprador(e.target.value)}
-          style={{ width: '100%', marginTop: 12, padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
         />
 
         <input
           placeholder="Forma de Pagamento (ex: dinheiro, cartão)"
           value={formaPagamento}
           onChange={(e) => setFormaPagamento(e.target.value)}
-          style={{ width: '100%', marginTop: 10, padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
         />
 
         <div className="modal-actions">
@@ -155,3 +206,4 @@ export default function CriarPedidoModal({ aberto, onFechar, onSalvo }: Props) {
     </div>
   )
 }
+
