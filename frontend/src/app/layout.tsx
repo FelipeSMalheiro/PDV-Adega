@@ -1,6 +1,6 @@
 import './globals.css'
 import './painel/painel.css'
-import Cabecalho from './painel/cabecalho'
+import LayoutClient from './LayoutClient'
 
 export const metadata = {
   title: 'Smart Malte',
@@ -10,16 +10,11 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <Cabecalho />
-        {children}
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
   )

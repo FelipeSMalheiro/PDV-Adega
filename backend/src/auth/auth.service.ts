@@ -16,10 +16,15 @@ export class AuthService {
     throw new UnauthorizedException('CPF ou senha inválidos');
   }
 
-  async login(user: any) {
-    const payload = { sub: user.id, cpf: user.cpf };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+async login(user: any) {
+  const payload = {
+    sub: user.id,
+    cpf: user.cpf,
+    nome: user.nome, // adiciona o nome ao payload
   }
+  return {
+    access_token: this.jwtService.sign(payload),
+  }
+}
+
 }
