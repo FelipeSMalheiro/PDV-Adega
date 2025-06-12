@@ -8,11 +8,22 @@ import { Produto } from '@prisma/client';
 export class ProdutosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<Produto[]> {
-    return this.prisma.produto.findMany({
-      include: { categoria: true },
-    });
-  }
+  async findAll(nome?: string): Promise<Produto[]> {
+  const filtro = nome
+    ? {
+        nome: {
+          contains: nome,
+          mode: 'insensitive', // permite buscar sem diferenciar maiúsculas/minúsculas
+        },
+      }
+    : {};
+
+  return this.prisma.produto.findMany({
+    where: filtro,
+    include: { categoria: true },
+  });
+}
+
 
   async findOne(id: number): Promise<Produto> {
     const produto = await this.prisma.produto.findUnique({

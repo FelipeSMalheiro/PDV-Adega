@@ -1,5 +1,6 @@
 import {
-  Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus
+  Controller, Get, Post, Put, Delete, Param, Body, HttpException, HttpStatus,
+  Query
 } from '@nestjs/common';
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
@@ -11,8 +12,8 @@ export class ProdutosController {
   constructor(private readonly produtosService: ProdutosService) {}
 
   @Get()
-  async findAll(): Promise<Produto[]> {
-    return this.produtosService.findAll();
+  async findAll(@Query('nome') nome?: string): Promise<Produto[]> {
+    return this.produtosService.findAll(nome);
   }
 
   @Get(':id')

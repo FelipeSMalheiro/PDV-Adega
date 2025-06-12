@@ -1,33 +1,31 @@
 'use client'
 
-'use client'
-
 import Image from 'next/image'
 import './painel.css'
 import { useEffect, useState } from 'react'
+import CriarPedidoModal from './CriarPedidoModal'
 
 type Produto = {
   id: number
   nome: string
   estoque: number
-  quantidade: Float16Array
-  unidade_medida: number
+  quantidade: number
+  unidade_medida: string
 }
-
 
 export default function Painel() {
   const [produtos, setProdutos] = useState<Produto[]>([])
+  const [modalAberto, setModalAberto] = useState(false)
+
+  const buscarProdutos = () => {
+    fetch('http://localhost:3000/produtos')
+      .then((res) => res.json())
+      .then(setProdutos)
+      .catch((err) => console.error('Erro:', err))
+  }
 
   useEffect(() => {
-    fetch('http://localhost:3000/produtos')
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error('Erro ao buscar produtos')
-        }
-        return res.json()
-      })
-      .then((data) => setProdutos(data))
-      .catch((err) => console.error('Erro:', err))
+    buscarProdutos()
   }, [])
 
   return (
@@ -52,16 +50,10 @@ export default function Painel() {
               <div className="painel-grid">
                 {produtos.map((produto) => (
                   <div className="card-produto" key={produto.id}>
-                    <img
-                      src="/cerveja.png"
-                      alt={produto.nome}
-                      className="img-produto"
-                    />
+                    <img src="/cerveja.png" alt={produto.nome} className="img-produto" />
                     <strong>{produto.nome}</strong>
                     <span>{produto.quantidade} {produto.unidade_medida}</span>
-                    
                     <span>{produto.estoque} unidades em estoque</span>
-                    
                   </div>
                 ))}
               </div>
@@ -69,6 +61,17 @@ export default function Painel() {
           </section>
         </div>
       </main>
+
+      <button className="botao-cadastrar" onClick={() => setModalAberto(true)}>
+        Novo Pedido
+      </button>
+
+      <CriarPedidoModal
+        aberto={modalAberto}
+        onFechar={() => setModalAberto(false)}
+        onSalvo={buscarProdutos}
+      />
     </div>
   )
 }
+
